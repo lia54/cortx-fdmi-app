@@ -21,5 +21,6 @@ To run our experiments we need a CORTX-MOTR cluster up and running with an S3 Se
 # cd ~/cortx-motr/fdmi/plugins
 # ./fdmi_app_word_count
 ```
-Command reference :
+Command reference:
+
 [CORTX MOTR Quick Start Guide](https://github.com/lia54/cortx-motr/blob/main/doc/Quick-Start-Guide.rst)

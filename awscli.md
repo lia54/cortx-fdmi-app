@@ -4,8 +4,8 @@
 ### Prerequisites
 
 - A Computer or VM with CentOS 7.8 (or later).
--`$ sudo yum install epel-release`
--`$ sudo yum install ansible`
+- `$ sudo yum install epel-release`
+- `$ sudo yum install ansible`
 
 
 ### Create AWS Account on the CORTX server
@@ -39,9 +39,11 @@ $ cat ~/.aws/config
 ```
 
 Set the network connection
-$ vim /etc/hosts /* add your target node (cortx-server endpoint) e.g. IP s3.seagate.com */
+
+`$ vim /etc/hosts /* add your target node (cortx-server endpoint) e.g. IP s3.seagate.com */`
 
 Check connection
+
 `$ ping s3.seagate.com`
 
 Try some AWS commands and make sure you have sample foo.txt in your directory
@@ -59,19 +61,21 @@ When getting Gateway problem
 3. aws s3 ls should be empty
 
 When having problems to connect to endpoint
-1. uninstall aws
+1. Uninstall aws
 ```
 $ sudo rm -rf /usr/local/aws-cli
 $ sudo rm /usr/local/bin/aws
 $ sudo rm /usr/local/bin/aws_completer
 ```
-2. uninstall awscli-plugin
+2. Uninstall awscli-plugin
 `$ pip3 uninstall awscli-plugin`
 
 3. reinstall and setup again endpoint and credentials
 
-Command reference :
+Command reference:
+
 [Amazon S3 Cli](https://docs.aws.amazon.com/cli/latest/reference/s3/)
 
-Other reference : 
+Other reference:
+ 
 [CORTX S3-server Quick Start Guide](https://github.com/Seagate/cortx-s3server/blob/main/docs/CORTX-S3%20Server%20Quick%20Start%20Guide.md#14-test-your-build-using-s3-cli)

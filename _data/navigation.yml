@@ -6,7 +6,7 @@
 - title: CORTX-Server
   url: server
   
-- title: Aws-cli
+- title: AWS-Client
   url: awscli
   
 #- title: Data
