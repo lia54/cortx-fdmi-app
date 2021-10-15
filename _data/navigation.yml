@@ -1,0 +1,13 @@
+# Belongs at: /_data/navigation.yml
+
+- title: Home
+  url: /
+
+- title: Setting
+  url: setting
+  
+#- title: Search
+#  url: search
+  
+#- title: Data
+#  url: data
