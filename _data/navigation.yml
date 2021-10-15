@@ -4,10 +4,10 @@
   url: /
 
 - title: CORTX-Server
-  url: server
+  url: /server
   
 - title: AWS-Client
-  url: awscli
+  url: /awscli
   
 #- title: Data
 #  url: data
