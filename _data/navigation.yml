@@ -3,11 +3,11 @@
 - title: Home
   url: /
 
-- title: Setting
-  url: setting
+- title: CORTX-Server
+  url: server
   
-#- title: Search
-#  url: search
+- title: Aws-cli
+  url: awscli
   
 #- title: Data
 #  url: data
