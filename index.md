@@ -15,7 +15,9 @@ Goal: Create an FDMI application that takes the Object-name and Bucket-name info
 
 ![CORTX MOTR FDMI Architecture](./images/CORTX-Motr-fdmi.png)
 
-*FDMI Motr architecture. Each FDMI application is initialized as a Motr Client that communicates with Motr Core by using Remote Procedure Calls (RPCs). The AWS Client also communicates with Motr via CORTX S3-server that runs on top of Motr core. 
+FDMI Motr architecture. 
+Each FDMI application is initialized as a Motr Client that communicates with Motr Core by using Remote Procedure Calls (RPCs). 
+The AWS Client also communicates with Motr via CORTX S3-server that runs on top of Motr core. 
  
 
 
