@@ -1,1 +1,1 @@
-# deepspecs.github.io# cortx-fdmi-app
+#cortx-fdmi-app
