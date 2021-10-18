@@ -19,8 +19,9 @@ Create an FDMI application that takes the Object-name and Bucket-name informatio
 
 
 ### Code Skeleton
-```
 Modify fdmi_app python script to add the new functionalities as follows:
+
+```
 1. Create a new function that reads the object data by connecting with the AWS Client
 2. Create a new function that does the word count
   # Convert Object data to string
