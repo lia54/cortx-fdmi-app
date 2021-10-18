@@ -32,7 +32,8 @@ Modify fdmi_app python script to add the new functionalities as follows:
   # Call the function that reads the object data
   # Convert Object data to string
   # Remove quotation marks and punctuation
-  # Count the number of ocurrences of each word */Every word should be converted to lowercase Ex.: 'The' and 'the' should be counted as the same word /*
+  # Count the number of ocurrences of each word 
+    */Every word should be converted to lowercase Ex.: 'The' and 'the' should be counted as the same word /*
   # Load to memory using a python dictionary data structure
   # Return the 40 most popular words with the corresponging count value as a list of tuples.
   
