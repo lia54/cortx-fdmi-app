@@ -12,19 +12,29 @@ Then it starts listening for new S3 requests and create/print to stdout an event
 ### The Goal of this project
 Create an FDMI application that takes the Object-name and Bucket-name information from S3 requests from the AWS client, reads the Object data and print the number of ocurrences of each word.
 
-## Code Sckeleton
+### Instructions to setup the development enviroment
+
+1. Follow steps to setup a CORTX cluster in the [CORTX server](https://lia54.github.io/cortx-fdmi-app/server) tab
+2. Follow steps to create and configure AWS client in the [AWS-Client](https://lia54.github.io/cortx-fdmi-app/awscli) tab
+
+
+### Code Skeleton
 ```
-Create a new function that does the word count
-  # Process the KV record and data obtained from the fdmi_sample_plugin
-  # Decode the record from hex and binary format
-  # Convert to string
-  # Get the Object-name and Bucket-name
-  # Connect to AWS client and request Object data
+Modify fdmi_app python script to add the new functionalities as follows:
+1. Create a new function that reads the object data by connecting with the AWS Client
+2. Create a new function that does the word count
   # Convert Object data to string
   # Remove quotation marks and punctuation
-  # Count the number of ocurrences of each word (Every word converted to lowercase Ex.: The and the should be counted as the same word)
-  # Store in a dictionary
-  # Print the 40 most popular words
+  # Count the number of ocurrences of each word */Every word should be converted to lowercase Ex.: 'The' and 'the' should be counted as the same word /*
+  # Load to memory using a python dictionary data structure
+  # Return the 40 most popular words with the corresponging count value as a list of tuples
+3. Modify the process_fdmi_record() function
+  # Process the KV record and data obtained from the stdout produced by the fdmi_sample_plugin
+  # Decode the record using hex and binary format
+  # Convert to string
+  # Get the Object-name and Bucket-name and pass them to the function that read the object data
+  # Call the function that does the word count
+  # Print to stdout the value returned 
 ```
 
 ### Network Architecture
