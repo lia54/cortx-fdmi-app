@@ -22,16 +22,23 @@ Create an FDMI application that takes the Object-name and Bucket-name informatio
 Modify fdmi_app python script to add the new functionalities as follows:
 
 ```
-1. Create a new function that reads the object data by connecting with the AWS Client
+1. Create a new function that reads the object data by connecting with the AWS Client.
+  # Open a new AWS client session using boto3 and passing your aws_access_key_id and aws_secret_access_key.
+  # Create a resource specifying service_name='s3' region_name='US' and enpoint_url='http://s3.seagate.com'
+  # Use the following function to read the object data client.Object(bucket_name, object_name).get()['Body'].read()
+  # Decode the results using 'utf-8' binary format
+  
 2. Create a new function that does the word count
+  # Call the function that reads the object data
   # Convert Object data to string
   # Remove quotation marks and punctuation
   # Count the number of ocurrences of each word */Every word should be converted to lowercase Ex.: 'The' and 'the' should be counted as the same word /*
   # Load to memory using a python dictionary data structure
-  # Return the 40 most popular words with the corresponging count value as a list of tuples
-3. Modify the process_fdmi_record() function
-  # Process the KV record and data obtained from the stdout produced by the fdmi_sample_plugin
-  # Decode the record using hex and binary format
+  # Return the 40 most popular words with the corresponging count value as a list of tuples.
+  
+3. Modify the process_fdmi_record() function.
+  # Process the KV record and data obtained from the stdout produced by the fdmi_sample_plugin and store it in memory using a list
+  # Decode each record using 'hex' hexadecimal and 'utf-8' binary formats
   # Convert to string
   # Get the Object-name and Bucket-name and pass them to the function that read the object data
   # Call the function that does the word count
