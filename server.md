@@ -123,7 +123,8 @@ Now if you configure AWS CLI and do some S3 puts,
 you should see FDMI events and word counts.
 
 Link to the changes needed to run with this setup in the following files:
-`m0t1fs/linux_kernel/st/m0t1fs_common_inc.sh`
+`m0t1fs/linux_kernel/st/m0t1fs_common_inc.sh`,
+
 `motr/st/utils/motr_services.sh`
 
 [Patch link with solution](https://gist.github.com/trshaffer/9b2fd7f352e3dc3f688af789e3e451d7#file-0001-local-changes-patch)
