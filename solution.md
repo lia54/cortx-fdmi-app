@@ -40,3 +40,7 @@ def count_words(text_obj):
 ### Hackathon script to download
 
 [Hackathon fdmi app](images/hackaton_app)
+
+### Hackathon sample text files to use
+
+[Hackathon sample files](sample_text/)
