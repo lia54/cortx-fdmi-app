@@ -17,7 +17,6 @@ The video demostrates how to run the application in a real CORTX setup.
 
 'def count_words(text_obj):
     my_counts= {}
-
     for obj in text_obj:
         obj = obj.translate(str.maketrans('', '', string.punctuation))
         obj = obj.replace('“', "").replace("”", "")
