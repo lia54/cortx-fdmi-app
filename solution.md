@@ -34,6 +34,8 @@ def count_words(text_obj):
     sorted_counts= {k: v for k, v in sorted(my_counts.items(), key=lambda item: item[1], reverse=True)}
     
     # Return the 40 most popular words           
-    return list(sorted_counts.items())[:40]'
+    return list(sorted_counts.items())[:40]
+    
+'
 
 
