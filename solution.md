@@ -15,7 +15,7 @@ The video demostrates how to run the application in a real CORTX setup.
 
 ### Function that does word count
 
-'
+```
 def count_words(text_obj):
     my_counts= {}
     
@@ -35,7 +35,6 @@ def count_words(text_obj):
     
     # Return the 40 most popular words           
     return list(sorted_counts.items())[:40]
-    
-'
+ ```
 
 
