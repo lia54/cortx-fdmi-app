@@ -56,6 +56,8 @@ kv_records = []
 # is communicating.
 processes = []
 
+# Global my_counts dictionary
+my_counts = dict()
 
 def make_request(kv):
     print ("got requsest to post : {}".format(kv))
@@ -104,31 +106,31 @@ def connect_client(kv_records):
 
     return text_obj
 
-def count_words(text_obj):
-    my_counts= {}
+def count_words(filename, popular_words):
+    with open(filename, 'r') as fo:
+        data = fo.read().replace('\n', '')
 
-    for obj in text_obj:
-        obj = obj.translate(str.maketrans('', '', string.punctuation))
-        obj = obj.replace('“', "").replace("”", "")
-        words = str(obj).split()
+    data = data.translate(str.maketrans('', '', string.punctuation))
+    data = data.replace('“', "").replace("”", "")
+    words = str(data).split()
 
-        for word in words:
-            word_lw = word.lower()
-            if word_lw in my_counts:
-                my_counts[word_lw] +=1
-            else:
-                my_counts[word_lw] =1
+    for word in words:
+        word_lw = word.lower()
+        if word_lw in my_counts:
+            my_counts[word_lw] +=1
+        else:
+            my_counts[word_lw] =1
     # Sort count dict
     sorted_counts= {k: v for k, v in sorted(my_counts.items(), key=lambda item: item[1], reverse=True)}
     
-    # Return the 40 most popular words           
-    return list(sorted_counts.items())[:40]
+    # Return the most popular words           
+    return list(sorted_counts.items())[:popular_words]
 
 
 # Process the FDMI records in form of JSON and perform some useful actions
 # such as de-dup, logging and/or sending to the replicator program for data
 # move.
-def process_fdmi_record(kv_record):
+def process_fdmi_record(kv_record, words):
 
     try:
         # Parsing stdout records produce by the fdmi_sample_plugin
@@ -154,7 +156,7 @@ def process_fdmi_record(kv_record):
             obj_data = connect_client(kv_records)
 
             #Count words in object data
-            counting = count_words(obj_data)
+            counting = count_words(obj_data, words)
 
             # Print to stdout
             print(counting)
@@ -295,7 +297,7 @@ def get_cluster_info(args):
 
 
 # For the plugin C-program and wait for data on stdout.
-def listen_on_command(command):
+def listen_on_command(command, words):
     global processes
     p = subprocess.Popen(shlex.split(command), stdin=subprocess.PIPE,
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -311,7 +313,7 @@ def listen_on_command(command):
             fid = "fid"
             record = output.decode("utf-8")
             if fid in record:
-                process_fdmi_record(record)
+                process_fdmi_record(record, words)
 
         rc = p.poll()
         if rc is not None:
@@ -326,37 +328,30 @@ def listen_on_command(command):
 
     return p.poll()
 
-def poll_directory(path):
+def poll_directory(path, words):
     file_list=[] 
-    my_counts={}
-    sorted_counts={}
-    data_list=[]
+
     try:
         while True:
 
             ### Find new created files
             for file in os.listdir(path):
-                if os.path.join(path,file) not in file_list:
-                    file_list.append(os.path.join(path, file))
-                
-                    ### Open new files and print word count to stdout
-                    for f in file_list:
-                        with open(f, 'r') as fo:
-                            data = fo.read().replace('\n', '')
-                            data_list.append(data)
+                if not file.endswith('.swp') and '.DS_Store' not in file:
+                    if os.path.join(path,file) not in file_list:
+                        file_list.append(os.path.join(path, file))
+                    
+                        # Count words in object data
+                        counting = count_words(os.path.join(path,file), words)
+
+                        # Print to stdout
+                        print(counting)
                 else:
                     continue
-
-            #Count words in object data
-            counting = count_words(data_list)
-
-            # Print to stdout
-            print(counting)
 
             sleep(3)
 
     except KeyboardInterrupt:
-        print('Exiting fdmi emulation application', file=sys.stderr)
+        print('/n Exiting fdmi emulation application', file=sys.stderr)
     except:
         print("Unexpected error", file=sys.stderr)
         raise
@@ -367,7 +362,7 @@ def main(args):
     einval = 22
     if args.local_directory:
         print('Listening for emulated FDMI events on:\n  {}'.format(args.local_directory), file=sys.stderr)
-        poll_directory(args.local_directory)
+        poll_directory(args.local_directory, args.popular_words)
     else:
 
         # Filter id is used by Motr FDMI subsystem for identifying the
@@ -407,7 +402,7 @@ def main(args):
 
         # Execute fdmi_sample_plugin with cluster info in loop and wait for
         # the FDMI events in form of JSON metadata.
-        listen_on_command(get_plugin_cmd(args))
+        listen_on_command(get_plugin_cmd(args), args.popular_words)
 
 
 if __name__ == '__main__':
@@ -425,4 +420,5 @@ if __name__ == '__main__':
                     type=str)
     ap.add_argument('-ld', '--local-directory', required=False, help='path to directory that will emulate cortx-motr',
                     type=str)
+    ap.add_argument('-w', '--popular-words', required=False, help='number of popular words to print',type=int, default=40)
     main(ap.parse_args())
