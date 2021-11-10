@@ -56,8 +56,8 @@ kv_records = []
 # is communicating.
 processes = []
 
-# Global my_counts dictionary
-my_counts = dict()
+# Global word_counts dictionary
+word_counts = dict()
 
 def make_request(kv):
     print ("got requsest to post : {}".format(kv))
@@ -106,12 +106,12 @@ def connect_client(kv_records):
 
     return text_obj
 
-def count_words(filename, popular_words):
-    # Open the filename, process data  and do the word count
-    # return the most popular words stored in the my_counts dictionary
-    print (filename)
-    # every 3 seconds, you are calling this function with an array of [ string1, string2, ...., string3 ] where each string is the contents of one of the files
-    # instead, you should call this function just once for each file. 
+def count_words(filename, num_print):
+    # Open the filename, read the data and do the word count
+    print ("Will need to open file %s, and do the word count on its contents." % filename)
+    # now print the word count for just this file (limit to just the num_print most popular files)
+    # then also print the global word count for all files (limit to just the num_print most popular files)
+    return word_counts
 
 
 # Process the FDMI records in form of JSON and perform some useful actions
@@ -146,7 +146,7 @@ def process_fdmi_record(kv_record, words):
             counting = count_words(obj_data, words)
 
             # Print to stdout
-            print(counting)
+            # print(counting)
             ################################
     except:
         #raise
@@ -315,7 +315,7 @@ def listen_on_command(command, words):
 
     return p.poll()
 
-def poll_directory(path, words):
+def poll_directory(path, words, sleep_seconds=3):
     file_list=[] 
     
     try:
@@ -330,12 +330,10 @@ def poll_directory(path, words):
                         # Count words in object data
                         counting = count_words(os.path.join(path,file), words)
                        
-                        # Print to stdout
-                        print(counting)
                 else:
                     continue
 
-            sleep(3)
+            sleep(sleep_seconds)  # TODO this should be a parameter with a default value of 1
 
     except KeyboardInterrupt:
         print('/n Exiting fdmi emulation application', file=sys.stderr)
@@ -349,7 +347,7 @@ def main(args):
     einval = 22
     if args.local_directory:
         print('Listening for emulated FDMI events on:\n  {}'.format(args.local_directory), file=sys.stderr)
-        poll_directory(args.local_directory, args.popular_words)
+        poll_directory(args.local_directory, args.num_print, args.sleep_seconds)
     else:
 
         # Filter id is used by Motr FDMI subsystem for identifying the
@@ -389,25 +387,27 @@ def main(args):
 
         # Execute fdmi_sample_plugin with cluster info in loop and wait for
         # the FDMI events in form of JSON metadata.
-        listen_on_command(get_plugin_cmd(args), args.popular_words)
+        listen_on_command(get_plugin_cmd(args), args.num_print)
 
 
 if __name__ == '__main__':
     import argparse
 
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument('-pp', '--plugin-path', required=False,
+    ap.add_argument('-pp', '--plugin_path', required=False,
                     help='path to fdmi_sample_plugin executable',
                     type=str, default='./fdmi_sample_plugin')
-    ap.add_argument('-hp', '--hctl-path', required=False, help='path to hctl executable',
+    ap.add_argument('-hp', '--hctl_path', required=False, help='path to hctl executable',
                     type=str, default='hctl')
-    ap.add_argument('-cp', '--config-path', required=False, help='path to confd.xc file',
+    ap.add_argument('-cp', '--config_path', required=False, help='path to confd.xc file',
                     type=str, default='/etc/motr/confd.xc')
-    ap.add_argument('-fi', '--filter-id', required=False, help='plugin filter id',
+    ap.add_argument('-fi', '--filter_id', required=False, help='plugin filter id',
                     type=str)
-    ap.add_argument('-ld', '--local-directory', required=False, help='path to directory that will emulate cortx-motr',
+    ap.add_argument('-ld', '--local_directory', required=False, help='path to directory that will emulate cortx-motr',
                     type=str)
-    ap.add_argument('-w', '--popular-words', required=False, help='number of popular words to print',
+    ap.add_argument('-np', '--num_print', required=False, help='when printing the word count, only print the NP most frequent words',
                     type=int, default=40)
+    ap.add_argument('-ss', '--sleep_seconds', required=False, help='how frequently to poll the local directory',
+                    type=int, default=2)
     main(ap.parse_args())
 
