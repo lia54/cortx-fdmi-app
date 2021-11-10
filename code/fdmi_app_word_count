@@ -107,8 +107,11 @@ def connect_client(kv_records):
     return text_obj
 
 def count_words(filename, num_print):
-    with open(filename, 'r') as fo:
-        data = fo.read().replace('\n', '')
+    if "/" in filename:
+        with open(filename, 'r') as fo:
+            data = fo.read().replace('\n', '')
+    else:
+        data = filename
 
     data = data.translate(str.maketrans('', '', string.punctuation))
     data = data.replace('“', "").replace("”", "")
@@ -159,7 +162,7 @@ def process_fdmi_record(kv_record, num_print):
             counting = count_words(obj_data, num_print)
 
             # Print to stdout
-            # print(counting)
+            print(counting)
             ################################
     except:
         #raise
