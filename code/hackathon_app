@@ -59,11 +59,12 @@ processes = []
 # Global word_counts dictionary
 word_counts = dict()
 
+
 def make_request(kv):
-    print ("got requsest to post : {}".format(kv))
-    #try:
-        #json_req = json.loads(kv)
-    #except:
+    print("got requsest to post : {}".format(kv))
+    # try:
+    #json_req = json.loads(kv)
+    # except:
     #    print ("json loading failed ")
     try:
         #print (json_req)
@@ -73,7 +74,7 @@ def make_request(kv):
         #html = resp.json()
         #print ("Resonse is : {}".format(html))
     except:
-        print ("Error occured! : response  : {}".format(resp))
+        print("Error occured! : response  : {}".format(resp))
 
 
 def str_decode(encoded):
@@ -83,21 +84,26 @@ def str_decode(encoded):
         return encoded
     return codecs.decode(encoded, 'hex').decode('utf-8')
 
+
 def get_object(client, bucket, object_key):
     try:
-        value = client.Object(bucket, object_key).get()['Body'].read().decode('utf-8')
+        value = client.Object(bucket, object_key).get()[
+            'Body'].read().decode('utf-8')
         #print("Read object '%s' from bucket '%s'", object_key, bucket)
     except:
         print("Problem to get object'%s'", object_key)
     else:
         return value
 
-def connect_client(kv_records):
-    text_obj=[]
 
-    #Init client connection with actual key ID and Secret key for my aws client
-    session = boto3.Session(aws_access_key_id='AKIAu8cBwsNeSeWcX1L0kaCaYg', aws_secret_access_key='j98WQMFokoNuCgHos37Hc3rSfktoVbuVdJzerQIz')
-    client = session.resource('s3', region_name='US', endpoint_url='http://s3.seagate.com')
+def connect_client(kv_records):
+    text_obj = []
+
+    # Init client connection with actual key ID and Secret key for my aws client
+    session = boto3.Session(aws_access_key_id='AKIAu8cBwsNeSeWcX1L0kaCaYg',
+                            aws_secret_access_key='j98WQMFokoNuCgHos37Hc3rSfktoVbuVdJzerQIz')
+    client = session.resource('s3', region_name='US',
+                              endpoint_url='http://s3.seagate.com')
 
     for kv in kv_records:
         object_key = kv['cr_key']
@@ -106,13 +112,19 @@ def connect_client(kv_records):
 
     return text_obj
 
+
 def count_words(filename, num_print):
     # Open the filename, read the data and do the word count
     #print ("Will need to open file %s, and do the word count on its contents." % filename)
     file = open(filename, "r", encoding="utf-8-sig")
     from collections import Counter
-    wordcount = Counter(file.read().split())
-    for item in wordcount.items(): print("{}\t{}".format(*item))
+    wordList = file.read()
+    import string
+    table = str.maketrans(dict.fromkeys(string.punctuation))
+    words = wordList.translate(table)
+    wordcount = Counter(words.split())
+    for item in wordcount.items():
+        print("{}\t{}".format(*item))
     # now print the word count for just this file (limit to just the num_print most popular files)
     # then also print the global word count for all files (limit to just the num_print most popular files)
     return word_counts
@@ -126,12 +138,13 @@ def process_fdmi_record(kv_record, num_print):
     try:
         # Parsing stdout records produce by the fdmi_sample_plugin
         kvs = json.loads(kv_record)
-        kv = {'fid': kvs["fid"], 'cr_key': str_decode(kvs["cr_key"]), 'cr_val': str_decode(kvs["cr_val"])}
+        kv = {'fid': kvs["fid"], 'cr_key': str_decode(
+            kvs["cr_key"]), 'cr_val': str_decode(kvs["cr_val"])}
         print("KVS Records : {}".format(kv))
-        
-        flag =  True
 
-        #check dedup records
+        flag = True
+
+        # check dedup records
         for kv_i in kv_records:
             if kv['cr_key'] == kv_i['cr_key']:
                 print("Object already created")
@@ -142,19 +155,19 @@ def process_fdmi_record(kv_record, num_print):
 
         if flag == True and kv['cr_val'] != "0":
             kv_records.append(kv)
-            
+
             # Connect to client and get object data
             obj_data = connect_client(kv_records)
 
-            #Count words in object data
+            # Count words in object data
             counting = count_words(obj_data, num_print)
 
             # Print to stdout
             # print(counting)
             ################################
     except:
-        #raise
-        print ('Exception occurred!\n')
+        # raise
+        print('Exception occurred!\n')
 
 
 # Handle SIGNT and SIGTERM. Stop the underlying processes and exit.
@@ -208,18 +221,21 @@ def get_cluster_info(args):
 
     profiles = cluster_js.get('profiles')
     if profiles is None or len(profiles) == 0:
-        print('Failed to fetch profiles from cluster info:\n{}'.format(cluster_js), file=sys.stderr)
+        print('Failed to fetch profiles from cluster info:\n{}'.format(
+            cluster_js), file=sys.stderr)
         return None
 
     profile_fid = str(profiles[0].get('fid'))
     if profile_fid is None or len(profile_fid) == 0:
-        print('Failed to fetch profiles[0]/fid from cluster info:\n{}'.format(cluster_js), file=sys.stderr)
+        print(
+            'Failed to fetch profiles[0]/fid from cluster info:\n{}'.format(cluster_js), file=sys.stderr)
         return None
     info['profile_fid'] = profile_fid
 
     nodes_data = cluster_js.get('nodes')
     if nodes_data is None or len(nodes_data) == 0:
-        print('Failed to fetch nodes from cluster info:\n{}'.format(cluster_js), file=sys.stderr)
+        print('Failed to fetch nodes from cluster info:\n{}'.format(
+            cluster_js), file=sys.stderr)
         return None
     services = nodes_data[0].get('svcs')
     if services is None or len(services) == 0:
@@ -230,13 +246,15 @@ def get_cluster_info(args):
         if svc['name'] == 'hax':
             ha_endpoint = str(svc.get('ep'))
             if ha_endpoint is None or len(ha_endpoint) == 0:
-                print('Invalid nodes/svcs/hax/ep in cluster info:\n{}'.format(cluster_js), file=sys.stderr)
+                print(
+                    'Invalid nodes/svcs/hax/ep in cluster info:\n{}'.format(cluster_js), file=sys.stderr)
                 return None
             info['ha_endpoint'] = ha_endpoint
 
         svc_name = str(svc.get('name'))
         if svc_name is None or len(svc_name) == 0:
-            print('Invalid nodes/svcs/name in cluster info:\n{}'.format(cluster_js), file=sys.stderr)
+            print(
+                'Invalid nodes/svcs/name in cluster info:\n{}'.format(cluster_js), file=sys.stderr)
             return None
 
         # Always using the first m0client
@@ -274,10 +292,12 @@ def get_cluster_info(args):
         print('Failed to get Hare endpoint from the cluster info.', file=sys.stderr)
         return None
     if info.get('process_fid') is None:
-        print('Failed to get client process fid from the cluster info.', file=sys.stderr)
+        print('Failed to get client process fid from the cluster info.',
+              file=sys.stderr)
         return None
     if info.get('local_endpoint') is None:
-        print('Failed to get local client endpoint from the cluster info.', file=sys.stderr)
+        print('Failed to get local client endpoint from the cluster info.',
+              file=sys.stderr)
         return None
     if info.get('fdmi_filter_fid') is None:
         print('Failed to get fdmi filter id from the cluster config.', file=sys.stderr)
@@ -319,25 +339,27 @@ def listen_on_command(command, num_print):
 
     return p.poll()
 
+
 def poll_directory(path, words, sleep_seconds):
-    file_list=[] 
-    
+    file_list = []
+
     try:
         while True:
 
-            ### Find new created files
+            # Find new created files
             for file in os.listdir(path):
                 if not file.endswith('.swp') and '.DS_Store' not in file:
-                    if os.path.join(path,file) not in file_list:
+                    if os.path.join(path, file) not in file_list:
                         file_list.append(os.path.join(path, file))
-                    
+
                         # Count words in object data
-                        counting = count_words(os.path.join(path,file), words)
-                       
+                        counting = count_words(os.path.join(path, file), words)
+
                 else:
                     continue
 
-            sleep(sleep_seconds)  # TODO this should be a parameter with a default value of 1
+            # TODO this should be a parameter with a default value of 1
+            sleep(sleep_seconds)
 
     except KeyboardInterrupt:
         print('  Exiting fdmi emulation application', file=sys.stderr)
@@ -350,8 +372,10 @@ def main(args):
     global cluster_info
     einval = 22
     if args.local_directory:
-        print('Listening for emulated FDMI events on:\n  {}'.format(args.local_directory), file=sys.stderr)
-        poll_directory(args.local_directory, args.num_print, args.sleep_seconds)
+        print('Listening for emulated FDMI events on:\n  {}'.format(
+            args.local_directory), file=sys.stderr)
+        poll_directory(args.local_directory,
+                       args.num_print, args.sleep_seconds)
     else:
 
         # Filter id is used by Motr FDMI subsystem for identifying the
@@ -414,4 +438,3 @@ if __name__ == '__main__':
     ap.add_argument('-ss', '--sleep_seconds', required=False, help='how frequently to poll the local directory',
                     type=int, default=2)
     main(ap.parse_args())
-
