@@ -108,7 +108,11 @@ def connect_client(kv_records):
 
 def count_words(filename, num_print):
     # Open the filename, read the data and do the word count
-    print ("Will need to open file %s, and do the word count on its contents." % filename)
+    #print ("Will need to open file %s, and do the word count on its contents." % filename)
+    file = open(filename, "r", encoding="utf-8-sig")
+    from collections import Counter
+    wordcount = Counter(file.read().split())
+    for item in wordcount.items(): print("{}\t{}".format(*item))
     # now print the word count for just this file (limit to just the num_print most popular files)
     # then also print the global word count for all files (limit to just the num_print most popular files)
     return word_counts
